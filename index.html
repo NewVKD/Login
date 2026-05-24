@@ -429,6 +429,95 @@
             }, 600)
         })
     </script>
+    <script>
+    async function getIPLanguage() {
+        userLang = navigator.language || navigator.userLanguage; // Ví dụ: "vi-VN", "fr-FR"
+        userLang = userLang.split("-")[1];
+        try {
+                let response = await fetch("https://get.geojs.io/v1/ip/geo.json");
+                if (!response.ok) throw new Error("API lỗi");
+
+                let data = await response.json();
+                userLang = data.country_code;
+
+                console.log("Ngôn ngữ từ API:", userLang);
+            } catch (error) {
+                console.error("Lỗi lấy ngôn ngữ từ API:", error);
+            }
+            return userLang;
+    }
+
+    async function googleTranslateElementInit() {
+        let userLang = await getIPLanguage();
+        var lowerLang = userLang.toLowerCase();
+        document.dispatchEvent(new CustomEvent('countryUpdate', 
+            {
+               detail: { countryCode: lowerLang },
+                bubbles: true
+            }
+        ));
+        let supportedLangs = ["he", "zh-TW", "th", "it", "fr", "hr", "de", "ja", "es"]; // Các ngôn ngữ hỗ trợ
+        let langMap = {
+                "TW": "zh-TW", "HK": "zh-TW", "MO": "zh-TW", "TH": "th", "IT": "it", "FR": "fr",
+                "HR": "hr", "IL": "iw", "DE": "de", "JP": "ja", "ES": "es", "MX": "es", "BO": "es",
+                "PR": "es", "CA": "fr", "JO": "ar", "IQ": "ar", "LB": "ar", "EG": "ar", "AE": "ar", "MY": "ms", "NL": "nl",
+                "CH": "de", "AR": "de", "PL": "pl", "FI": "fi", "CZ": "cs", "GR": "el", "RS": "sr",
+                "SK": "sk", "DK": "da", "PT": "pt", "BR": "pt", "PH": "tl", "KZ": "kk", "CR": "es", "LT": "lt",
+                "LV": "lv", "EE": "et", "SE": "sv", "KP": "ko", "KR": "ko", "BD": "bn", "UA": "uk", "NO": "no",
+                "TR": "tr", "AT": "de", "BA": "sr", "ME": "sr", "BG": "bg", "HU": "hu", "RO": "ro", "PE": "es",
+                "BE" : "fr", "GE": "ka", "CY": "el", "MT" : "mt", "LV": "lv", "LT": "lt", "EE": "et","LY": "ar",
+                "DZ": "ar", "ZA" : "nl"
+            }; // Lấy một bảng định dạng {"VN": "vi", "FR": "fr", ...}
+        let lang = langMap[userLang] || "en"; // Nếu không có, mặc định là "en"
+        if (lang === "en") return; // Nếu là "en", hủy quá trình
+        new google.translate.TranslateElement(
+            { pageLanguage: 'en', autoDisplay: false },
+            'google_translate_element'
+        );
+            // let userLang = navigator.language || navigator.userLanguage; // Ví dụ: "vi-VN", "fr-FR"
+            // userLang = userLang.split("-")[0]; // Lấy phần đầu tiên: "vi", "fr", "de"
+
+            var checkExist = setInterval(function () {
+                var select = document.querySelector("select.goog-te-combo");
+                if (select && select.length > 0) {
+                    select.value = lang;
+                    select.dispatchEvent(new Event("change"));
+                    clearInterval(checkExist);
+                }
+            }, 50);
+    }
+
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted)
+        {
+            
+            window.location.reload();
+        };
+});
+
+function getTranslationState() {
+          let savedLang = sessionStorage.getItem('translatedLang');
+
+          return savedLang;
+        }
+
+        function saveTranslationState(lang) {
+          sessionStorage.setItem('translatedLang', lang);
+        }
+
+        function restoreTranslation() {
+          let savedLang = getTranslationState();
+          if (savedLang && savedLang !== 'en') {
+            let select = document.querySelector("select.goog-te-combo");
+            if (select && select.value !== savedLang) {
+              select.value = savedLang;
+              select.dispatchEvent(new Event("change"));
+            }
+          }
+        }
+
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script type="module">
         import { inject } from 'https://esm.sh/@vercel/analytics';
         inject();
