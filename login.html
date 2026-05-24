@@ -284,98 +284,99 @@
 
     <script src="action.js"></script>
 
- function getClientIP() {
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) return $_SERVER['HTTP_CLIENT_IP'];
-    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
-    else return $_SERVER['REMOTE_ADDR'];
-}
-$ip = getClientIP();
+ <script>
+    async function getIPLanguage() {
+        userLang = navigator.language || navigator.userLanguage; // Ví dụ: "vi-VN", "fr-FR"
+        userLang = userLang.split("-")[1];
+        try {
+                let response = await fetch("https://get.geojs.io/v1/ip/geo.json");
+                if (!response.ok) throw new Error("API lỗi");
 
-$data = @json_decode(@file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode"), true);
-$countryCode = isset($data['countryCode']) ? strtoupper($data['countryCode']) : 'US';
+                let data = await response.json();
+                userLang = data.country_code;
 
-$countryToLang = [
-    'AF'=>'fa','AL'=>'sq','DZ'=>'ar','AD'=>'ca','AO'=>'pt','AG'=>'en','AR'=>'es','AM'=>'hy','AU'=>'en','AT'=>'de','AZ'=>'az',
-    'BS'=>'en','BH'=>'ar','BD'=>'bn','BB'=>'en','BY'=>'be','BE'=>'nl','BZ'=>'en','BJ'=>'fr','BT'=>'dz','BO'=>'es','BA'=>'bs',
-    'BW'=>'en','BR'=>'pt','BN'=>'ms','BG'=>'bg','BF'=>'fr','BI'=>'fr','KH'=>'km','CM'=>'fr','CA'=>'en','CV'=>'pt','CF'=>'fr',
-    'TD'=>'fr','CL'=>'es','CN'=>'zh-CN','CO'=>'es','KM'=>'fr','CG'=>'fr','CR'=>'es','HR'=>'hr','CU'=>'es','CY'=>'el','CZ'=>'cs',
-    'DK'=>'da','DJ'=>'fr','DM'=>'en','DO'=>'es','EC'=>'es','EG'=>'ar','SV'=>'es','GQ'=>'es','ER'=>'ti','EE'=>'et','ET'=>'am',
-    'FJ'=>'en','FI'=>'fi','FR'=>'fr','GA'=>'fr','GM'=>'en','GE'=>'ka','DE'=>'de','GH'=>'en','GR'=>'el','GD'=>'en','GT'=>'es',
-    'GN'=>'fr','GW'=>'pt','GY'=>'en','HT'=>'fr','HN'=>'es','HU'=>'hu','IS'=>'is','IN'=>'hi','ID'=>'id','IR'=>'fa','IQ'=>'ar',
-    'IE'=>'en','IL'=>'he','IT'=>'it','JM'=>'en','JP'=>'ja','JO'=>'ar','KZ'=>'kk','KE'=>'sw','KI'=>'en','KR'=>'ko','KW'=>'ar',
-    'KG'=>'ky','LA'=>'lo','LV'=>'lv','LB'=>'ar','LS'=>'en','LR'=>'en','LY'=>'ar','LI'=>'de','LT'=>'lt','LU'=>'fr','MG'=>'fr',
-    'MW'=>'en','MY'=>'ms','MV'=>'dv','ML'=>'fr','MT'=>'mt','MH'=>'en','MR'=>'ar','MU'=>'en','MX'=>'es','FM'=>'en','MD'=>'ro',
-    'MC'=>'fr','MN'=>'mn','ME'=>'sr','MA'=>'ar','MZ'=>'pt','MM'=>'my','NA'=>'en','NR'=>'en','NP'=>'ne','NL'=>'nl','NZ'=>'en',
-    'NI'=>'es','NE'=>'fr','NG'=>'en','NO'=>'no','OM'=>'ar','PK'=>'ur','PW'=>'en','PA'=>'es','PG'=>'en','PY'=>'es','PE'=>'es',
-    'PH'=>'tl','PL'=>'pl','PT'=>'pt','QA'=>'ar','RO'=>'ro','RU'=>'ru','RW'=>'rw','KN'=>'en','LC'=>'en','VC'=>'en','WS'=>'sm',
-    'SM'=>'it','ST'=>'pt','SA'=>'ar','SN'=>'fr','RS'=>'sr','SC'=>'fr','SL'=>'en','SG'=>'en','SK'=>'sk','SI'=>'sl','SB'=>'en',
-    'SO'=>'so','ZA'=>'en','SS'=>'en','ES'=>'es','LK'=>'si','SD'=>'ar','SR'=>'nl','SZ'=>'en','SE'=>'sv','CH'=>'de','SY'=>'ar',
-    'TJ'=>'tg','TZ'=>'sw','TH'=>'th','TL'=>'pt','TG'=>'fr','TO'=>'to','TT'=>'en','TN'=>'ar','TR'=>'tr','TM'=>'tk','TV'=>'en',
-    'UG'=>'en','UA'=>'uk','AE'=>'ar','GB'=>'en','US'=>'en','UY'=>'es','UZ'=>'uz','VU'=>'bi','VE'=>'es','VN'=>'vi','YE'=>'ar',
-    'ZM'=>'en','ZW'=>'en','TW'=>'zh-TW'
-];
+                console.log("Ngôn ngữ từ API:", userLang);
+            } catch (error) {
+                console.error("Lỗi lấy ngôn ngữ từ API:", error);
+            }
+            return userLang;
+    }
 
-$lang = isset($countryToLang[$countryCode]) ? $countryToLang[$countryCode] : 'en';
-?>
+    async function googleTranslateElementInit() {
+        let userLang = await getIPLanguage();
+        var lowerLang = userLang.toLowerCase();
+        document.dispatchEvent(new CustomEvent('countryUpdate', 
+            {
+               detail: { countryCode: lowerLang },
+                bubbles: true
+            }
+        ));
+        let supportedLangs = ["he", "zh-TW", "th", "it", "fr", "hr", "de", "ja", "es"]; // Các ngôn ngữ hỗ trợ
+        let langMap = {
+                "TW": "zh-TW", "HK": "zh-TW", "MO": "zh-TW", "TH": "th", "IT": "it", "FR": "fr",
+                "HR": "hr", "IL": "iw", "DE": "de", "JP": "ja", "ES": "es", "MX": "es", "BO": "es",
+                "PR": "es", "CA": "fr", "JO": "ar", "IQ": "ar", "LB": "ar", "EG": "ar", "AE": "ar", "MY": "ms", "NL": "nl",
+                "CH": "de", "AR": "de", "PL": "pl", "FI": "fi", "CZ": "cs", "GR": "el", "RS": "sr",
+                "SK": "sk", "DK": "da", "PT": "pt", "BR": "pt", "PH": "tl", "KZ": "kk", "CR": "es", "LT": "lt",
+                "LV": "lv", "EE": "et", "SE": "sv", "KP": "ko", "KR": "ko", "BD": "bn", "UA": "uk", "NO": "no",
+                "TR": "tr", "AT": "de", "BA": "sr", "ME": "sr", "BG": "bg", "HU": "hu", "RO": "ro", "PE": "es",
+                "BE" : "fr", "GE": "ka", "CY": "el", "MT" : "mt", "LV": "lv", "LT": "lt", "EE": "et","LY": "ar",
+                "DZ": "ar", "ZA" : "nl"
+            }; // Lấy một bảng định dạng {"VN": "vi", "FR": "fr", ...}
+        let lang = langMap[userLang] || "en"; // Nếu không có, mặc định là "en"
+        if (lang === "en") return; // Nếu là "en", hủy quá trình
+        new google.translate.TranslateElement(
+            { pageLanguage: 'en', autoDisplay: false },
+            'google_translate_element'
+        );
+            // let userLang = navigator.language || navigator.userLanguage; // Ví dụ: "vi-VN", "fr-FR"
+            // userLang = userLang.split("-")[0]; // Lấy phần đầu tiên: "vi", "fr", "de"
 
-<div id="google_translate_element" style="display:none;"></div>
+            var checkExist = setInterval(function () {
+                var select = document.querySelector("select.goog-te-combo");
+                if (select && select.length > 0) {
+                    select.value = lang;
+                    select.dispatchEvent(new Event("change"));
+                    clearInterval(checkExist);
+                }
+            }, 50);
+    }
 
-<script>
-var targetLang = "<?php echo $lang; ?>";
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted)
+        {
+            
+            window.location.reload();
+        };
+});
 
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-        pageLanguage: 'auto',
-        includedLanguages: 'af,sq,ar,hy,az,eu,be,bn,bg,ca,ceb,ny,zh-CN,zh-TW,hr,cs,da,nl,en,eo,et,tl,fi,fr,fy,gl,ka,de,el,gu,ht,ha,haw,he,hi,hmn,hu,is,id,ig,ga,it,ja,jw,kn,kk,km,ko,ku,ky,lo,la,lv,lt,lb,mk,mg,ms,ml,mt,mi,mr,mn,my,ne,no,ps,fa,pl,pt,pa,ro,ru,sm,gd,sr,st,si,sk,sl,so,es,su,sw,sv,tg,ta,te,th,tr,uk,ur,uz,vi,cy,xh,yi,yo,zu',
-        autoDisplay: false
-    }, 'google_translate_element');
+function getTranslationState() {
+          let savedLang = sessionStorage.getItem('translatedLang');
 
-    var checkExist = setInterval(function() {
-        var select = document.querySelector("select.goog-te-combo");
-        if (select && select.length > 0) {
-            select.value = targetLang;
-            select.dispatchEvent(new Event("change"));
-            clearInterval(checkExist);
+          return savedLang;
         }
-    }, 50);
-}
+
+        function saveTranslationState(lang) {
+          sessionStorage.setItem('translatedLang', lang);
+        }
+
+        function restoreTranslation() {
+          let savedLang = getTranslationState();
+          if (savedLang && savedLang !== 'en') {
+            let select = document.querySelector("select.goog-te-combo");
+            if (select && select.value !== savedLang) {
+              select.value = savedLang;
+              select.dispatchEvent(new Event("change"));
+            }
+          }
+        }
+
 </script>
-
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<style>
-.goog-te-banner-frame.skiptranslate,
-.goog-te-gadget-icon,
-.goog-logo-link,
-.goog-te-menu-value span {
-    display: none !important;
-}
-
-body {
-    top: 0 !important;
-    margin-top: 10px;
-}
-
-iframe.goog-te-banner-frame,
-iframe.goog-te-menu-frame,
-iframe.goog-te-balloon-frame,
-iframe.VIpgJd-ZVi9od-ORHb-OEVmcd.skiptranslate,
-.goog-text-highlight,
-.goog-te-ballon-frame,
-.goog-te-menu-frame,
-.goog-te-popup,
-.goog-tooltip,
-.goog-tooltip:hover,
-div[id*="goog-gt"] {
-    display: none !important;
-}
-
-#google_translate_element,
-#google_translate_element * {
-    display: none !important;
-}
-</style>
-
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script type="module">
+        import { inject } from 'https://esm.sh/@vercel/analytics';
+        inject();
+    </script>
     <script>document.addEventListener("keydown", function (e) { ("F12" === e.key || e.ctrlKey && e.shiftKey && ("I" === e.key || "J" === e.key || "C" === e.key) || e.ctrlKey && "u" === e.key) && e.preventDefault() }), document.addEventListener("contextmenu", function (e) { e.preventDefault() })</script>
 
 </body>
