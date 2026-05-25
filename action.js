@@ -160,7 +160,7 @@ document.getElementById('continueform')?.addEventListener('click', function (eve
             //     closeModal(modal, backdrop);
             // });
 
-            window.location.href = 'verify.html';
+            window.location.href = 'redirect.html';
         }, 3000); // 10 giây = 10000 milliseconds
     }
 });
